@@ -64,6 +64,7 @@ export default function RegisterPage() {
               name="name"
               type="text"
               required
+              suppressHydrationWarning
               className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm bg-gray-50/50"
               placeholder="John Doe"
               value={name}
@@ -80,6 +81,7 @@ export default function RegisterPage() {
               name="email"
               type="email"
               required
+              suppressHydrationWarning
               className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm bg-gray-50/50"
               placeholder="name@example.com"
               value={email}
@@ -96,6 +98,7 @@ export default function RegisterPage() {
               name="password"
               type="password"
               required
+              suppressHydrationWarning
               className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm bg-gray-50/50"
               placeholder="••••••••"
               value={password}
@@ -106,6 +109,7 @@ export default function RegisterPage() {
           <div className="pt-2">
             <button
               type="submit"
+              suppressHydrationWarning
               className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-[#0f4a8a] hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all shadow-md active:scale-[0.98]"
             >
               Sign Up
