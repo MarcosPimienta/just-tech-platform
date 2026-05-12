@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 
@@ -18,18 +18,45 @@ interface LessonBuilderProps {
   onSave: (data: LessonData) => Promise<void>;
   initialData?: LessonData;
   loading?: boolean;
+  topic?: any;
 }
 
-export default function LessonBuilder({ onSave, initialData, loading }: LessonBuilderProps) {
+export default function LessonBuilder({ onSave, initialData, loading, topic }: LessonBuilderProps) {
+  const getDefaultStarterCode = () => {
+    const engine = topic?.engine || "REACT";
+    if (engine === "PYTHON") return "# Write your Python code here\nprint('Hello world')";
+    if (engine === "TERMINAL") return "# Type your shell commands here\nls -la";
+    return "export default function Exercise() {\n  return (\n    <div>\n      {/* Write your code here */}\n    </div>\n  );\n}";
+  };
+
+  const getDefaultTest = () => {
+    const engine = topic?.engine || "REACT";
+    if (engine === "REACT") {
+      return "async (container) => {\n  // return { pass: true, message: 'Great job!' };\n}";
+    }
+    return "async (output) => {\n  // For Python/Terminal, 'output' is the console text\n  // return { pass: output.includes('expected'), message: 'Done!' };\n}";
+  };
+
   const [data, setData] = useState<LessonData>(initialData || {
     title: "",
     concept: "",
     exampleCode: "",
     exerciseDescription: "",
-    starterCode: "export default function Exercise() {\n  return (\n    <div>\n      {/* Write your code here */}\n    </div>\n  );\n}",
+    starterCode: getDefaultStarterCode(),
     solution: "",
-    test: "async (Exercise) => {\n  // return { pass: true, message: 'Great job!' };\n}",
+    test: getDefaultTest(),
   });
+
+  // Update defaults once topic loads
+  useEffect(() => {
+    if (topic && !initialData) {
+      setData(prev => ({
+        ...prev,
+        starterCode: getDefaultStarterCode(),
+        test: getDefaultTest(),
+      }));
+    }
+  }, [topic, initialData]);
 
   const updateField = (field: keyof LessonData, value: string) => {
     setData(prev => ({ ...prev, [field]: value }));
@@ -138,7 +165,10 @@ export default function LessonBuilder({ onSave, initialData, loading }: LessonBu
                   />
                 </div>
                 <p className="mt-2 text-xs text-gray-400 italic">
-                  Function takes the student's component as 'Exercise'. Should return {`{ pass: boolean, message: string }`}.
+                  {topic?.engine === "REACT" 
+                    ? "Function takes the student's component as 'container'. Should return { pass: boolean, message: string }."
+                    : "Function takes the student's execution output as a string. Should return { pass: boolean, message: string }."
+                  }
                 </p>
               </div>
             </div>

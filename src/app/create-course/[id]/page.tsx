@@ -87,7 +87,7 @@ export default function TopicLessonsPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-2">Add New Lesson</h2>
               <p className="text-gray-500 text-sm">Fill in the details below to create a new interactive step.</p>
             </div>
-            <LessonBuilder onSave={handleSaveLesson} loading={saving} />
+            <LessonBuilder onSave={handleSaveLesson} loading={saving} topic={topic} />
           </div>
 
           {/* Sidebar: Lessons List */}
