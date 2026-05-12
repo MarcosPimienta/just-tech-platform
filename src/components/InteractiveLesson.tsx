@@ -32,6 +32,7 @@ export default function InteractiveLesson({
   function handleRun() {
     setRunCode(draft);
     setTestResult(null);
+    setError(null);
   }
 
   const handleTestResult = useCallback((result: { pass: boolean; message: string }) => {
@@ -78,13 +79,14 @@ export default function InteractiveLesson({
               dangerouslySetInnerHTML={{ __html: lesson.exerciseDescription }}
             />
 
-            <div className="border border-gray-800 rounded-t-lg overflow-hidden shadow-inner">
+            <div className="border border-gray-800 rounded-t-lg overflow-hidden shadow-inner bg-[#282c34]">
               <CodeMirror
                 value={draft}
                 extensions={[javascript({ jsx: true })]}
                 onChange={(val) => setDraft(val)}
                 theme="dark"
                 className="text-sm font-mono"
+                minHeight="200px"
               />
             </div>
             
@@ -134,7 +136,11 @@ export default function InteractiveLesson({
             </div>
 
             {testResult && (
-              <div className="flex items-center justify-between gap-3 pt-4 border-t border-gray-200">
+              <div className={`flex items-center justify-between gap-3 p-4 rounded-lg border mt-4 ${
+                testResult.pass 
+                  ? "bg-green-50 border-green-200" 
+                  : "bg-red-50 border-red-200"
+              }`}>
                 <div className="flex items-center gap-3 flex-1">
                   {testResult.pass ? (
                     <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
