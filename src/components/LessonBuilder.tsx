@@ -26,7 +26,7 @@ export default function LessonBuilder({ onSave, initialData, loading }: LessonBu
     concept: "",
     exampleCode: "",
     exerciseDescription: "",
-    starterCode: "",
+    starterCode: "export default function Exercise() {\n  return (\n    <div>\n      {/* Write your code here */}\n    </div>\n  );\n}",
     solution: "",
     test: "async (Exercise) => {\n  // return { pass: true, message: 'Great job!' };\n}",
   });

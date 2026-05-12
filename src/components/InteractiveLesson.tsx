@@ -65,10 +65,11 @@ export default function InteractiveLesson({
         <div className="p-8">
           <div className="flex justify-between items-start mb-6">
             <h2 className="text-2xl font-bold text-gray-900 font-sans leading-tight">
-              Topic: React Bolt - <br/> Lesson {lesson.id}: {lesson.title.split(':')[0]}
+              Topic: React Bolt - <br/> Lesson {lesson?.id || "?"}: {lesson?.title?.split(':')[0] || "Untitiled"}
             </h2>
             <button
               onClick={() => setShowSuggestModal(true)}
+              suppressHydrationWarning
               className="text-xs font-bold text-[#0f4a8a] border border-[#0f4a8a] px-3 py-1.5 rounded-full hover:bg-blue-50 transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
