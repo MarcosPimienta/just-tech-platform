@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React Bolt — Learn React by Doing</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.development.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/jsx/jsx.min.js"></script>
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: #faf6f0;
+    color: #1a2332;
+    line-height: 1.65;
+    font-size: 16px;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: #f0ead8;
+    border-right: 1px solid #d8d0b8;
+    padding: 28px 0 32px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 24px 2px;
+    color: #c14b2e;
+    letter-spacing: -0.5px;
+  }
+  .sidebar .tagline {
+    font-size: 13px;
+    font-style: italic;
+    color: #6b5d4a;
+    margin: 0 24px 24px;
+  }
+  .module-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b5d4a;
+    padding: 16px 24px 8px;
+  }
+  .lesson-item {
+    display: block;
+    padding: 9px 24px 9px 21px;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    color: #1a2332;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .lesson-item:hover {
+    background: rgba(193, 75, 46, 0.08);
+  }
+  .lesson-item.active {
+    background: rgba(193, 75, 46, 0.13);
+    border-left-color: #c14b2e;
+    font-weight: 600;
+  }
+  .lesson-item .num {
+    color: #6b5d4a;
+    margin-right: 8px;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+  }
+  .lesson-item .check {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #2d8659;
+    font-weight: 700;
+  }
+
+  /* Main */
+  .main {
+    padding: 56px 64px 96px;
+    max-width: 920px;
+  }
+  .breadcrumb {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b5d4a;
+    margin-bottom: 6px;
+  }
+  .lesson-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 28px;
+    color: #1a2332;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  /* Concept text */
+  .concept p { margin: 14px 0; }
+  .concept ul { margin: 14px 0; padding-left: 24px; }
+  .concept li { margin: 6px 0; }
+  .concept code {
+    background: #ece4cf;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.86em;
+    color: #5d3a1c;
+  }
+  .concept pre {
+    background: #2b2418;
+    color: #f5f0e0;
+    padding: 14px 18px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .concept pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b5d4a;
+    margin: 44px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d8d0b8;
+  }
+
+  /* Example and exercise areas */
+  .example-area {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .code-block {
+    background: #2b2418;
+    color: #f5f0e0;
+    padding: 16px 18px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    overflow: auto;
+    white-space: pre;
+    margin: 0;
+  }
+  .preview-frame {
+    background: white;
+    border: 1px solid #d8d0b8;
+    border-radius: 4px;
+    padding: 24px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    overflow: auto;
+  }
+  .preview-frame button {
+    background: #c14b2e;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    margin: 2px 0;
+  }
+  .preview-frame button:hover:not(:disabled) {
+    background: #a93e25;
+  }
+  .preview-frame button:disabled {
+    background: #c8c0a8;
+    cursor: not-allowed;
+  }
+  .preview-frame input, .preview-frame textarea {
+    border: 1px solid #c8c0a8;
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    color: #1a2332;
+  }
+  .preview-frame input:focus, .preview-frame textarea:focus {
+    outline: 2px solid #c14b2e;
+    outline-offset: -1px;
+    border-color: #c14b2e;
+  }
+  .preview-frame p { margin: 8px 0; }
+
+  /* Editor */
+  .editor {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.55;
+    background: #2b2418;
+    color: #f5f0e0;
+    border: 1px solid #1a1610;
+    border-radius: 4px;
+    padding: 16px;
+    min-height: 260px;
+    resize: vertical;
+    tab-size: 2;
+    white-space: pre;
+    display: block;
+  }
+  .editor:focus {
+    outline: 2px solid #c14b2e;
+    outline-offset: -2px;
+  }
+
+  /* Buttons */
+  .button-row {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0 18px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .run-btn {
+    background: #c14b2e;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .run-btn:hover { background: #a93e25; }
+  .secondary-btn {
+    background: transparent;
+    color: #6b5d4a;
+    border: 1px solid #c8c0a8;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+  }
+  .secondary-btn:hover { background: #f5f0e0; }
+
+  /* Error */
+  .error {
+    background: #fcf0ee;
+    border-left: 3px solid #c14b2e;
+    padding: 12px 16px;
+    margin: 0 0 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #8a3520;
+    white-space: pre-wrap;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Result label */
+  .result-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b5d4a;
+    margin: 0 0 6px;
+  }
+
+  /* Solution panel */
+  .solution-panel {
+    margin-top: 24px;
+    border: 1px dashed #c8c0a8;
+    border-radius: 4px;
+    padding: 16px 20px;
+    background: rgba(193, 75, 46, 0.04);
+  }
+  .solution-panel .section-title {
+    margin-top: 0;
+    border: none;
+    padding: 0;
+  }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid #d8d0b8;
+    gap: 12px;
+  }
+  .nav-btn {
+    background: #c14b2e;
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .nav-btn:hover:not(:disabled) { background: #a93e25; }
+  .nav-btn:disabled {
+    background: #d8d0b8;
+    color: #8a8270;
+    cursor: not-allowed;
+  }
+  .nav-btn.outline {
+    background: transparent;
+    color: #c14b2e;
+    border: 1px solid #c14b2e;
+  }
+  .nav-btn.outline:hover { background: rgba(193, 75, 46, 0.08); }
+
+  /* Empty preview placeholder */
+  .preview-empty {
+    color: #8a8270;
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Loading */
+  .loading {
+    padding: 64px;
+    text-align: center;
+    color: #6b5d4a;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  /* Responsive */
+  /* CodeMirror — match the warm dark aesthetic */
+  .cm-readonly,
+  .cm-editor { margin: 0; }
+  .cm-readonly .CodeMirror,
+  .cm-editor .CodeMirror {
+    background: #2b2418;
+    color: #f5f0e0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    border-radius: 4px;
+    height: auto;
+  }
+  .cm-readonly .CodeMirror { padding: 14px 0; }
+  .cm-editor .CodeMirror {
+    min-height: 260px;
+    padding: 8px 0;
+    border: 1px solid #1a1610;
+  }
+  .cm-editor:focus-within .CodeMirror {
+    outline: 2px solid #c14b2e;
+    outline-offset: -2px;
+  }
+  .CodeMirror-gutters {
+    background: #251f15 !important;
+    border-right: 1px solid #1a1610 !important;
+  }
+  .CodeMirror-linenumber {
+    color: #6b5d4a !important;
+    padding: 0 8px 0 6px !important;
+  }
+  .CodeMirror-cursor {
+    border-left: 1.5px solid #f5f0e0 !important;
+  }
+  .CodeMirror-selected {
+    background: rgba(193, 75, 46, 0.3) !important;
+  }
+  .CodeMirror-line { padding-left: 12px; }
+  .cm-readonly .CodeMirror-line { padding-left: 16px; }
+
+  /* JSX syntax colors */
+  .cm-s-default .cm-keyword   { color: #e3a06b; }
+  .cm-s-default .cm-atom      { color: #c792ea; }
+  .cm-s-default .cm-string    { color: #b8d68c; }
+  .cm-s-default .cm-string-2  { color: #b8d68c; }
+  .cm-s-default .cm-number    { color: #f78c6c; }
+  .cm-s-default .cm-comment   { color: #7a6b56; font-style: italic; }
+  .cm-s-default .cm-tag       { color: #ec9080; }
+  .cm-s-default .cm-attribute { color: #d9b970; }
+  .cm-s-default .cm-bracket   { color: #d8d0b8; }
+  .cm-s-default .cm-def       { color: #82aaff; }
+  .cm-s-default .cm-variable  { color: #f5f0e0; }
+  .cm-s-default .cm-variable-2{ color: #82aaff; }
+  .cm-s-default .cm-property  { color: #e8d8b0; }
+  .cm-s-default .cm-operator  { color: #d8d0b8; }
+  .cm-s-default .cm-builtin   { color: #82aaff; }
+  .cm-s-default .cm-meta      { color: #d8d0b8; }
+  .cm-s-default .cm-qualifier { color: #e3a06b; }
+  .cm-s-default .cm-punctuation { color: #d8d0b8; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+      position: static;
+      height: auto;
+      max-height: 240px;
+    }
+    .main { padding: 32px 24px 64px; }
+    .example-area { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"><div class="loading">Loading React Bolt…</div></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+// ───────────────────────────────────────────────────────────
+// LESSON DATA
+// ───────────────────────────────────────────────────────────
+
+const LESSONS = [
+  {
+    id: '1.1',
+    title: 'useState: storing a value that changes',
+    concept: `
+      <p>React components <strong>re-run their function on every render</strong>. Plain variables get reset each time. <code>useState</code> gives you a value that <em>persists</em> across renders.</p>
+      <pre><code>const [count, setCount] = useState(0);</code></pre>
+      <p>You get back an array with two things:</p>
+      <ul>
+        <li><code>count</code> — the current value</li>
+        <li><code>setCount</code> — a function to update it (calling it triggers a re-render)</li>
+      </ul>
+      <p><code>useState(0)</code> sets the initial value to <code>0</code>. That argument is only used on the very first render.</p>
+      <p><strong>Rule:</strong> never assign to <code>count</code> directly. Always go through <code>setCount</code>.</p>
+    `,
+    exampleCode: `function Example() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a likes counter:</p>
+      <ul>
+        <li>State <code>likes</code>, starts at <code>0</code></li>
+        <li>A <code>❤</code> button that increases the count by 1</li>
+        <li>A <code>💔</code> button that decreases by 1, <strong>but never below 0</strong></li>
+        <li>Display the current likes</li>
+      </ul>
+    `,
+    starterCode: `function Exercise() {
+  // Hint: const [likes, setLikes] = useState(0);
+
+  return (
+    <div>
+      <p>Likes: 0</p>
+      <button>❤</button>{' '}
+      <button>💔</button>
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [likes, setLikes] = useState(0);
+
+  return (
+    <div>
+      <p>Likes: {likes}</p>
+      <button onClick={() => setLikes(likes + 1)}>❤</button>{' '}
+      <button onClick={() => setLikes(Math.max(0, likes - 1))}>💔</button>
+    </div>
+  );
+}`,
+  },
+
+  {
+    id: '1.2',
+    title: 'Boolean state & toggling',
+    concept: `
+      <p><code>useState</code> works with any type of value, including <strong>booleans</strong> (<code>true</code> / <code>false</code>). Booleans are how you remember on/off states: open/closed, visible/hidden, expanded/collapsed.</p>
+      <pre><code>const [isOn, setIsOn] = useState(false);</code></pre>
+      <p>To <strong>toggle</strong> a boolean, set it to the opposite of its current value:</p>
+      <pre><code>setIsOn(!isOn);</code></pre>
+      <p>(There's a safer "updater function" form for this you'll see in Lesson 1.6. For now this works.)</p>
+    `,
+    exampleCode: `function Example() {
+  const [isOn, setIsOn] = useState(false);
+
+  return (
+    <div>
+      <p>The light is: {isOn ? 'ON 💡' : 'OFF'}</p>
+      <button onClick={() => setIsOn(!isOn)}>Toggle</button>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a subscribe toggle:</p>
+      <ul>
+        <li>State <code>isSubscribed</code>, starts <code>false</code></li>
+        <li>Display: <code>"You are subscribed ✅"</code> when on, <code>"Not subscribed ❌"</code> when off</li>
+        <li>One button whose label <em>changes</em>: <code>"Subscribe"</code> when off, <code>"Unsubscribe"</code> when on</li>
+      </ul>
+    `,
+    starterCode: `function Exercise() {
+  // TODO: add boolean state and a toggle button
+
+  return (
+    <div>
+      {/* your code here */}
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  return (
+    <div>
+      <p>{isSubscribed ? 'You are subscribed ✅' : 'Not subscribed ❌'}</p>
+      <button onClick={() => setIsSubscribed(!isSubscribed)}>
+        {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+      </button>
+    </div>
+  );
+}`,
+  },
+
+  {
+    id: '1.3',
+    title: 'Conditional rendering',
+    concept: `
+      <p>Inside JSX, anything in <code>{ }</code> is regular JavaScript. That means you can use JS to decide what to render. Three common patterns:</p>
+      <p><strong>1. The <code>&amp;&amp;</code> pattern</strong> — show something only if a condition is true:</p>
+      <pre><code>{isLoggedIn &amp;&amp; &lt;p&gt;Welcome back!&lt;/p&gt;}</code></pre>
+      <p><strong>2. The ternary</strong> — show one thing or another:</p>
+      <pre><code>{isLoggedIn ? &lt;p&gt;Welcome&lt;/p&gt; : &lt;p&gt;Please log in&lt;/p&gt;}</code></pre>
+      <p><strong>3. Early return</strong> — branch the whole component:</p>
+      <pre><code>if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+return &lt;ActualUI /&gt;;</code></pre>
+      <p><strong>Gotcha:</strong> <code>&amp;&amp;</code> with a number renders the number on screen.</p>
+      <pre><code>{items.length &amp;&amp; &lt;List/&gt;}      // renders "0" when length is 0
+{items.length &gt; 0 &amp;&amp; &lt;List/&gt;}  // ✓ compare to make it a boolean</code></pre>
+    `,
+    exampleCode: `function Example() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <div>
+      {isLoggedIn
+        ? <p>Welcome back, Alex!</p>
+        : <p>Please log in.</p>}
+      {isLoggedIn && <p>You have 3 new messages.</p>}
+      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
+        {isLoggedIn ? 'Log out' : 'Log in'}
+      </button>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a counter that shows different messages depending on the value:</p>
+      <ul>
+        <li>State <code>count</code>, starts at <code>0</code></li>
+        <li>A <code>+1</code> button</li>
+        <li>If <code>count === 0</code> → show <code>"Empty!"</code></li>
+        <li>If <code>count &gt; 0</code> → show the count</li>
+        <li>If <code>count &gt;= 10</code> → ALSO show <code>"🔥 You're on fire!"</code></li>
+      </ul>
+    `,
+    starterCode: `function Exercise() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      {/* TODO: show the right message(s) based on count */}
+      <button>+1</button>
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      {count === 0 && <p>Empty!</p>}
+      {count > 0 && <p>Count: {count}</p>}
+      {count >= 10 && <p>🔥 You're on fire!</p>}
+      <button onClick={() => setCount(count + 1)}>+1</button>
+    </div>
+  );
+}`,
+  },
+
+  {
+    id: '1.4',
+    title: 'Controlled text inputs',
+    concept: `
+      <p>In React, form inputs are usually <strong>controlled</strong>: their value comes from state, and state updates on every keystroke.</p>
+      <pre><code>const [text, setText] = useState('');
+
+&lt;input
+  value={text}                                // state drives the input
+  onChange={(e) =&gt; setText(e.target.value)}   // input updates state
+/&gt;</code></pre>
+      <p>Now <code>text</code> is always in sync with what's on screen, and you can use it anywhere — display it, validate it, submit it.</p>
+      <p><code>e.target.value</code> is always a <strong>string</strong>, even from <code>&lt;input type="number"&gt;</code>. If you need a number, convert with <code>Number(...)</code> or <code>parseInt(...)</code>.</p>
+    `,
+    exampleCode: `function Example() {
+  const [name, setName] = useState('');
+
+  return (
+    <div>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Type your name"
+      />
+      <p>Hello, {name || 'stranger'}!</p>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a character counter:</p>
+      <ul>
+        <li>A text input (or <code>&lt;textarea&gt;</code>) the user can type into</li>
+        <li>Below it, show <code>"X / 100 characters"</code></li>
+        <li>When the length goes <em>over</em> 100, show the count in red</li>
+      </ul>
+    `,
+    starterCode: `function Exercise() {
+  // TODO: state for the text
+
+  return (
+    <div>
+      <textarea rows={3} cols={32} />
+      <p>0 / 100 characters</p>
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [text, setText] = useState('');
+  const isOver = text.length > 100;
+
+  return (
+    <div>
+      <textarea
+        rows={3}
+        cols={32}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <p style={{ color: isOver ? 'red' : 'inherit' }}>
+        {text.length} / 100 characters
+      </p>
+    </div>
+  );
+}`,
+  },
+
+  {
+    id: '1.5',
+    title: 'Multiple state variables',
+    concept: `
+      <p>A component can call <code>useState</code> as many times as you want. Each piece of state is independent.</p>
+      <pre><code>const [firstName, setFirstName] = useState('');
+const [lastName,  setLastName]  = useState('');</code></pre>
+      <p><strong>Rule of thumb:</strong> split state when the values change independently. Group them into one object only when they always change together.</p>
+      <p>If you do group them, you must spread the old state — otherwise you'll erase the other fields:</p>
+      <pre><code>// BUG — this erases 'last'!
+setForm({ first: 'Alex' });
+
+// CORRECT
+setForm({ ...form, first: 'Alex' });</code></pre>
+      <p>For now, prefer separate <code>useState</code> calls. It's simpler.</p>
+    `,
+    exampleCode: `function Example() {
+  const [first, setFirst] = useState('');
+  const [last, setLast]   = useState('');
+
+  return (
+    <div>
+      <input
+        value={first}
+        onChange={(e) => setFirst(e.target.value)}
+        placeholder="First name"
+      />{' '}
+      <input
+        value={last}
+        onChange={(e) => setLast(e.target.value)}
+        placeholder="Last name"
+      />
+      <p>Full name: {first} {last}</p>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a sign-up form preview:</p>
+      <ul>
+        <li>Three inputs: <code>email</code>, <code>password</code>, <code>confirmPassword</code></li>
+        <li>Show <code>"✅ Passwords match"</code> or <code>"❌ Passwords don't match"</code> below the inputs</li>
+        <li>That match message should only appear when <strong>both</strong> password fields have something in them</li>
+        <li>Show the entered email as: <code>"You entered: &lt;email&gt;"</code></li>
+      </ul>
+    `,
+    starterCode: `function Exercise() {
+  // TODO: three pieces of state — email, password, confirm
+
+  return (
+    <div>
+      <div><input placeholder="Email" /></div>
+      <div><input placeholder="Password" type="password" /></div>
+      <div><input placeholder="Confirm password" type="password" /></div>
+      {/* TODO: match message + email echo */}
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+
+  const bothFilled = password.length > 0 && confirm.length > 0;
+  const match = password === confirm;
+
+  return (
+    <div>
+      <div>
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+      </div>
+      <div style={{ marginTop: 6 }}>
+        <input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          type="password"
+        />
+      </div>
+      <div style={{ marginTop: 6 }}>
+        <input
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          placeholder="Confirm password"
+          type="password"
+        />
+      </div>
+      {bothFilled && (
+        <p>{match ? '✅ Passwords match' : "❌ Passwords don't match"}</p>
+      )}
+      <p>You entered: {email}</p>
+    </div>
+  );
+}`,
+  },
+
+  {
+    id: '1.6',
+    title: 'The updater function form',
+    concept: `
+      <p>Setters can be called with a value OR with a function:</p>
+      <pre><code>setCount(count + 1);          // value form
+setCount((c) =&gt; c + 1);       // updater function form</code></pre>
+      <p>Most of the time they're equivalent. But when you update the same state multiple times in a row, the value form silently breaks:</p>
+      <pre><code>// BUG: clicking only adds 1, not 3
+function handleClick() {
+  setCount(count + 1);
+  setCount(count + 1);
+  setCount(count + 1);
+}</code></pre>
+      <p>Why? <code>count</code> was captured at the start of the render — it's the same value all three times.</p>
+      <pre><code>// CORRECT: each updater receives the latest value
+function handleClick() {
+  setCount((c) =&gt; c + 1);
+  setCount((c) =&gt; c + 1);
+  setCount((c) =&gt; c + 1);
+}</code></pre>
+      <p><strong>Rule:</strong> when the new state depends on the previous state, use the updater form. This matters especially inside <code>setTimeout</code>, async functions, and any handler that fires after a delay.</p>
+    `,
+    exampleCode: `function Example() {
+  const [count, setCount] = useState(0);
+
+  function addThreeBuggy() {
+    setCount(count + 1);
+    setCount(count + 1);
+    setCount(count + 1);
+  }
+
+  function addThreeCorrect() {
+    setCount((c) => c + 1);
+    setCount((c) => c + 1);
+    setCount((c) => c + 1);
+  }
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={addThreeBuggy}>+3 (buggy)</button>{' '}
+      <button onClick={addThreeCorrect}>+3 (correct)</button>{' '}
+      <button onClick={() => setCount(0)}>Reset</button>
+    </div>
+  );
+}`,
+    exerciseDescription: `
+      <p>Build a delayed counter:</p>
+      <ul>
+        <li>State <code>count</code>, starts at <code>0</code></li>
+        <li>A button labeled <code>"+1 in 1 second"</code></li>
+        <li>When clicked, wait 1 second (<code>setTimeout</code>), then increment</li>
+        <li>The user might click the button several times quickly — <strong>every click should add 1, none should be lost</strong></li>
+      </ul>
+      <p>Try the value form first and watch the bug. Then switch to the updater form.</p>
+    `,
+    starterCode: `function Exercise() {
+  const [count, setCount] = useState(0);
+
+  function delayedIncrement() {
+    // TODO: setTimeout that increments count after 1000ms
+  }
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={delayedIncrement}>+1 in 1 second</button>
+    </div>
+  );
+}`,
+    solution: `function Exercise() {
+  const [count, setCount] = useState(0);
+
+  function delayedIncrement() {
+    setTimeout(() => {
+      // Updater form is essential here — by the time this runs,
+      // the captured 'count' could be stale if there were other clicks.
+      setCount((c) => c + 1);
+    }, 1000);
+  }
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={delayedIncrement}>+1 in 1 second</button>
+    </div>
+  );
+}`,
+  },
+];
+
+// ───────────────────────────────────────────────────────────
+// CODE COMPILER & PREVIEW
+// ───────────────────────────────────────────────────────────
+
+function compileComponent(code, componentName) {
+  const wrapped = code + '\n;return typeof ' + componentName + ' !== "undefined" ? ' + componentName + ' : null;';
+  const compiled = Babel.transform(wrapped, {
+    presets: ['react'],
+    parserOpts: { allowReturnOutsideFunction: true },
+  }).code;
+  const factory = new Function(
+    'React', 'useState', 'useEffect', 'useRef',
+    compiled
+  );
+  return factory(React, React.useState, React.useEffect, React.useRef);
+}
+
+// ───────────────────────────────────────────────────────────
+// CODEMIRROR EDITOR / VIEWER
+// ───────────────────────────────────────────────────────────
+
+function CodeMirrorView({ value, onChange, onSubmit, readOnly = false }) {
+  const containerRef = useRef(null);
+  const cmRef = useRef(null);
+  const onChangeRef = useRef(onChange);
+  const onSubmitRef = useRef(onSubmit);
+  onChangeRef.current = onChange;
+  onSubmitRef.current = onSubmit;
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (typeof CodeMirror === 'undefined') return;
+
+    const cm = CodeMirror(containerRef.current, {
+      value: value || '',
+      mode: 'jsx',
+      lineNumbers: !readOnly,
+      readOnly: readOnly,
+      indentUnit: 2,
+      tabSize: 2,
+      smartIndent: true,
+      lineWrapping: false,
+      viewportMargin: Infinity,
+      matchBrackets: true,
+      extraKeys: {
+        Tab: function(cm) {
+          if (cm.somethingSelected()) {
+            cm.indentSelection('add');
+          } else {
+            cm.replaceSelection('  ', 'end', '+input');
+          }
+        },
+        'Ctrl-Enter': function() {
+          if (onSubmitRef.current) onSubmitRef.current();
+        },
+        'Cmd-Enter': function() {
+          if (onSubmitRef.current) onSubmitRef.current();
+        },
+      },
+    });
+    cmRef.current = cm;
+
+    if (!readOnly) {
+      cm.on('change', function(instance) {
+        if (onChangeRef.current) onChangeRef.current(instance.getValue());
+      });
+    }
+
+    return function cleanup() {
+      const wrapper = cm.getWrapperElement();
+      if (wrapper && wrapper.parentNode) {
+        wrapper.parentNode.removeChild(wrapper);
+      }
+      cmRef.current = null;
+    };
+  }, []);
+
+  // Sync external value changes (e.g., reset, lesson change)
+  useEffect(() => {
+    if (cmRef.current && cmRef.current.getValue() !== value) {
+      cmRef.current.setValue(value || '');
+    }
+  }, [value]);
+
+  return <div ref={containerRef} className={readOnly ? 'cm-readonly' : 'cm-editor'} />;
+}
+
+function Preview({ code, componentName, onError }) {
+  const containerRef = useRef(null);
+  const rootRef = useRef(null);
+  const [empty, setEmpty] = useState(false);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    try {
+      const Component = compileComponent(code, componentName);
+      if (!Component) {
+        setEmpty(true);
+        if (onError) onError(null);
+        // Unmount previous if any
+        if (rootRef.current) {
+          const r = rootRef.current;
+          rootRef.current = null;
+          setTimeout(() => r.unmount(), 0);
+        }
+        return;
+      }
+      setEmpty(false);
+      if (!rootRef.current) {
+        rootRef.current = ReactDOM.createRoot(containerRef.current);
+      }
+      rootRef.current.render(React.createElement(Component));
+      if (onError) onError(null);
+    } catch (err) {
+      if (onError) onError(err.message);
+    }
+  }, [code, componentName]);
+
+  useEffect(() => () => {
+    if (rootRef.current) {
+      const r = rootRef.current;
+      rootRef.current = null;
+      setTimeout(() => r.unmount(), 0);
+    }
+  }, []);
+
+  return (
+    <div className="preview-frame">
+      <div ref={containerRef} />
+      {empty && <div className="preview-empty">No component named "{componentName}" found.</div>}
+    </div>
+  );
+}
+
+// ───────────────────────────────────────────────────────────
+// PROGRESS PERSISTENCE
+// ───────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'react-bolt-progress-v1';
+const CODE_KEY = 'react-bolt-code-v1';
+
+function loadProgress() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveProgress(set) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+  } catch {}
+}
+
+function loadCode() {
+  try {
+    return JSON.parse(localStorage.getItem(CODE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveCode(obj) {
+  try {
+    localStorage.setItem(CODE_KEY, JSON.stringify(obj));
+  } catch {}
+}
+
+// ───────────────────────────────────────────────────────────
+// MAIN APP
+// ───────────────────────────────────────────────────────────
+
+function App() {
+  const [activeId, setActiveId] = useState(LESSONS[0].id);
+  const [savedCodes, setSavedCodes] = useState(loadCode);   // {id: code} — what's been Run
+  const [completed, setCompleted] = useState(loadProgress);
+  const [error, setError] = useState(null);
+  const [showSolution, setShowSolution] = useState(false);
+
+  const lesson = LESSONS.find(l => l.id === activeId);
+  const lessonIndex = LESSONS.findIndex(l => l.id === activeId);
+
+  // Editor draft (what's in the textarea right now)
+  const [draft, setDraft] = useState(savedCodes[activeId] || lesson.starterCode);
+
+  // When the active lesson changes, reset draft and UI state
+  useEffect(() => {
+    setDraft(savedCodes[activeId] || lesson.starterCode);
+    setError(null);
+    setShowSolution(false);
+  }, [activeId]);
+
+  // What the preview should render: the last "Run" code, or starter if never run
+  const runCode = savedCodes[activeId] || lesson.starterCode;
+
+  function handleRun() {
+    const next = { ...savedCodes, [activeId]: draft };
+    setSavedCodes(next);
+    saveCode(next);
+  }
+
+  function handleReset() {
+    setDraft(lesson.starterCode);
+    const next = { ...savedCodes };
+    delete next[activeId];
+    setSavedCodes(next);
+    saveCode(next);
+    setError(null);
+  }
+
+  function handleMarkComplete() {
+    const next = new Set(completed);
+    next.add(activeId);
+    setCompleted(next);
+    saveProgress(next);
+  }
+
+  function handleNext() {
+    handleMarkComplete();
+    if (lessonIndex < LESSONS.length - 1) {
+      setActiveId(LESSONS[lessonIndex + 1].id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function handlePrev() {
+    if (lessonIndex > 0) {
+      setActiveId(LESSONS[lessonIndex - 1].id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Tab and Ctrl/Cmd+Enter are handled inside CodeMirror via extraKeys.
+
+  return (
+    <div className="app">
+      <aside className="sidebar">
+        <h1>React Bolt</h1>
+        <p className="tagline">Learn React by doing.</p>
+        <div className="module-title">Module 1 — State & Inputs</div>
+        {LESSONS.map(l => (
+          <div
+            key={l.id}
+            className={'lesson-item ' + (l.id === activeId ? 'active' : '')}
+            onClick={() => setActiveId(l.id)}
+          >
+            <span className="num">{l.id}</span>{l.title}
+            {completed.has(l.id) && <span className="check">✓</span>}
+          </div>
+        ))}
+      </aside>
+
+      <main className="main">
+        <div className="breadcrumb">Module 1 · Lesson {lesson.id}</div>
+        <h2 className="lesson-title">{lesson.title}</h2>
+
+        <div className="concept" dangerouslySetInnerHTML={{ __html: lesson.concept }} />
+
+        <div className="section-title">Example</div>
+        <div className="example-area">
+          <CodeMirrorView value={lesson.exampleCode} readOnly />
+          <Preview code={lesson.exampleCode} componentName="Example" />
+        </div>
+
+        <div className="section-title">Your turn</div>
+        <div className="concept" dangerouslySetInnerHTML={{ __html: lesson.exerciseDescription }} />
+
+        <CodeMirrorView
+          value={draft}
+          onChange={setDraft}
+          onSubmit={handleRun}
+        />
+
+        <div className="button-row">
+          <button className="run-btn" onClick={handleRun}>▶ Run (⌘/Ctrl + Enter)</button>
+          <button className="secondary-btn" onClick={handleReset}>Reset</button>
+          <button className="secondary-btn" onClick={() => setShowSolution(!showSolution)}>
+            {showSolution ? 'Hide solution' : 'Show solution'}
+          </button>
+        </div>
+
+        {error && <pre className="error">{error}</pre>}
+
+        <p className="result-label">Result</p>
+        <Preview code={runCode} componentName="Exercise" onError={setError} />
+
+        {showSolution && (
+          <div className="solution-panel">
+            <div className="section-title">Solution</div>
+            <CodeMirrorView value={lesson.solution} readOnly />
+          </div>
+        )}
+
+        <div className="nav">
+          <button className="nav-btn outline" onClick={handlePrev} disabled={lessonIndex === 0}>
+            ← Previous
+          </button>
+          {!completed.has(activeId) && (
+            <button className="nav-btn outline" onClick={handleMarkComplete}>
+              Mark complete ✓
+            </button>
+          )}
+          <button className="nav-btn" onClick={handleNext} disabled={lessonIndex === LESSONS.length - 1}>
+            Next →
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
