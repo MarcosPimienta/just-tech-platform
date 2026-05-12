@@ -22,6 +22,6 @@ export const config = {
      * - register (custom register page)
      * - favicon.ico, logo.png (public assets)
      */
-    "/((?!api/auth|_next/static|_next/image|login|register|favicon.ico|logo.png).*)",
+    "/((?!api/auth|api/register|_next/static|_next/image|login|register|favicon.ico|logo.png).*)",
   ],
 };
