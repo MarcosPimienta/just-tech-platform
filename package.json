@@ -1,0 +1,11 @@
+{
+  "name": "just-tech-platform",
+  "version": "1.0.0",
+  "description": "Interactive learning platform",
+  "scripts": {
+    "dev": "serve ."
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}

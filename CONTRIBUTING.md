@@ -1,16 +1,25 @@
-# Contributing to React Bolt
+# Contributing to Just Tech Platform
 
-Thanks for considering a contribution. The project is small and intentionally simple to keep the contribution loop tight.
+Thanks for considering a contribution! The project is designed as a Hub for interactive learning, where different technologies live in their own modules.
 
-## Project philosophy
+## Project Philosophy
 
-- **One file.** Everything lives in `index.html`. No build step, no bundler, no dependencies to install.
+- **Modular Hub.** Each technology has its own folder under `tech/` (e.g., `tech/react/`, `tech/javascript/`).
 - **SQLBolt-style.** Each lesson is small, focused, and includes a working example plus a tiny exercise.
-- **Beginner-first.** If a sentence assumes prior React knowledge that hasn't been taught yet in the lesson order, rewrite it.
+- **Beginner-first.** If a sentence assumes prior knowledge that hasn't been taught yet, rewrite it.
 
-## Adding or editing a lesson
+## Architecture
 
-Lessons are objects inside the `LESSONS` array in `index.html`. Each lesson has the following shape:
+- `index.html` — The main Hub landing page.
+- `tech/<topic>/` — Directory containing everything for a specific topic.
+  - `tech/<topic>/index.html` — The application shell (UI, Editor, Preview, Compiler).
+  - `tech/<topic>/lessons.js` — The actual content (lessons, examples, starter code).
+
+## Adding or Editing a Lesson
+
+If you want to add a lesson to an existing module (like React), you don't need to touch the complex application shell! 
+
+Simply open `tech/<topic>/lessons.js` and add an object to the `LESSONS` array:
 
 ```js
 {
@@ -52,22 +61,23 @@ Lessons are objects inside the `LESSONS` array in `index.html`. Each lesson has 
 }
 ```
 
-## Style notes
+## Creating a New Module (e.g., Vanilla JS, Angular)
 
-- Keep `concept` and `exerciseDescription` short. Aim for 3–5 sentences plus one code snippet in concept.
-- The example should isolate the lesson's concept. Don't introduce features the lesson hasn't taught.
-- The starter code should give just enough scaffolding so the learner isn't starting from a blank file, but not so much that the answer is obvious.
-- Use double quotes inside JSX attributes and single quotes for JS strings, to match existing style.
+1. **Duplicate an existing module:** Copy `tech/react/` to `tech/javascript/`.
+2. **Modify the Shell:** Open `tech/javascript/index.html`. You will need to remove Babel and the React imports if they aren't needed. Update the `compileComponent` function to use a simple `eval()` or standard DOM creation instead of React rendering.
+3. **Write Lessons:** Clear out the `LESSONS` array in `tech/javascript/lessons.js` and start adding your new content.
+4. **Link it in the Hub:** Open the root `index.html` and update the link for your new module in the grid so users can navigate to it.
 
-## Testing your change
+## Testing Your Change
 
-1. Open `index.html` in a browser (or via local server).
-2. Click through to your new lesson in the sidebar.
-3. Verify the example renders, the editor compiles your starter code without errors, and the solution renders too.
+Since we split the lessons into a separate `.js` file, modern browsers may block loading it via the `file://` protocol due to CORS restrictions.
+
+1. **Run a local server** in the root directory:
+   - Run `npx serve -p 3000`
+2. Open `http://localhost:3000` (or the port your server provided) in your browser.
+3. Navigate to your module and verify the lessons load properly.
 4. Try the `Reset` and `Show solution` buttons.
-
-That's the whole test plan.
 
 ## Submitting
 
-Open a PR with a short description. Screenshots help if you're changing visual styling.
+Open a PR with a short description. Screenshots help if you're changing visual styling!
