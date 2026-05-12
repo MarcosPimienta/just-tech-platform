@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import InteractiveLesson from "@/components/InteractiveLesson";
 import { LESSONS } from "@/data/reactLessons";
 
@@ -21,7 +21,7 @@ export default function ReactTechPage() {
       });
   }, []);
 
-  async function handleMarkComplete() {
+  const handleMarkComplete = useCallback(async () => {
     setCompleted((prev) => {
       const next = new Set(prev);
       next.add(activeId);
@@ -33,13 +33,13 @@ export default function ReactTechPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lessonId: activeId }),
     });
-  }
+  }, [activeId]);
 
-  function handleNextLesson() {
+  const handleNextLesson = useCallback(() => {
     if (activeLessonIndex < LESSONS.length - 1) {
       setActiveId(LESSONS[activeLessonIndex + 1].id);
     }
-  }
+  }, [activeLessonIndex]);
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] bg-[#f8f9fa] text-gray-900 font-sans relative">
@@ -79,6 +79,7 @@ export default function ReactTechPage() {
                 return (
                   <button
                     key={l.id}
+                    suppressHydrationWarning
                     onClick={() => setActiveId(l.id)}
                     className={`flex items-center text-left px-3 py-2 rounded-md transition-colors text-sm ${
                       isActive
