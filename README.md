@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Just Tech Platform 🚀
 
-## Getting Started
+An interactive learning platform for modern developers. Learn React, Linux, Python, and more through hands-on, in-browser exercises.
 
-First, run the development server:
+## 🌟 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 1. Interactive Learning Environment
+- **Multi-Engine Support**: Choose between React Preview, Python Interpreter (WASM), and Linux Terminal (xterm.js).
+- **Real-time Validation**: Instant feedback on your code with custom test suites for every lesson.
+- **Pluggable Runners**: Secure, browser-based execution using Babel, Pyodide, and WebContainers.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Course Creation Module
+- **Intuitive Builder**: Create topics and lessons with a powerful drag-and-drop-style curriculum builder.
+- **Lesson Builder**: Full-featured editor with CodeMirror integration for writing concepts, starter code, and validation logic.
+- **Smart Templates**: Automatically provides appropriate boilerplate based on the course engine.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Community & Review System
+- **Suggest Edits**: Students can propose improvements to any lesson content or code.
+- **Admin Review Dashboard**: Centralized hub for admins to diff, approve, or reject community contributions.
+- **One-Click Deployment**: Approved changes are instantly applied to live courses.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Robust Security
+- **Authentication**: Secure login/registration via NextAuth.
+- **Route Protection**: Role-based access control (RBAC) ensuring only admins can access sensitive builder and review tools.
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: Next.js 16 (Turbopack)
+- **Database**: SQLite with Prisma ORM
+- **Authentication**: NextAuth.js
+- **Styling**: Vanilla CSS / Tailwind CSS
+- **Editors**: CodeMirror
+- **Transpilation**: @babel/standalone
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clone & Install**:
+    ```bash
+    git clone [repo-url]
+    npm install
+    ```
 
-## Deploy on Vercel
+2.  **Environment Setup**:
+    Create a `.env` file with:
+    ```env
+    DATABASE_URL="file:./dev.db"
+    NEXTAUTH_SECRET="your-secret"
+    NEXTAUTH_URL="http://localhost:3000"
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **Database Migration**:
+    ```bash
+    npx prisma migrate dev
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4.  **Run Development**:
+    ```bash
+    npm run dev
+    ```
+
+## 📖 Roadmap
+
+- [x] Course Creation API & UI
+- [x] Multi-Engine Foundation (React, Python, Terminal)
+- [x] Suggest Edits & Admin Dashboard
+- [ ] Implement Full Python WASM (Pyodide) Integration
+- [ ] Implement Full Linux Terminal (WebContainer) Integration
+- [ ] User Progress Analytics & Certificates
