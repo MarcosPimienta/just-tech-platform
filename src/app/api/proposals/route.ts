@@ -36,3 +36,32 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to submit proposal" }, { status: 500 });
   }
 }
+
+export async function GET() {
+  const session = await getServerSession();
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+
+  if (user?.role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  try {
+    const proposals = await prisma.modificationProposal.findMany({
+      include: {
+        user: { select: { name: true, email: true } },
+        lesson: { include: { topic: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    return NextResponse.json(proposals);
+  } catch (error) {
+    return NextResponse.json({ error: "Error fetching proposals" }, { status: 500 });
+  }
+}

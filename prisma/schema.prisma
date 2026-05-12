@@ -25,6 +25,7 @@ model Topic {
   name        String
   slug        String   @unique // e.g. "react", "javascript"
   description String?
+  engine      String   @default("REACT") // e.g. "REACT", "PYTHON", "TERMINAL"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
