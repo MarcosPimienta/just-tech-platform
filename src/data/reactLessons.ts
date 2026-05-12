@@ -1,4 +1,4 @@
-const LESSONS = [
+export const LESSONS = [
   {
     id: '1.1',
     title: 'useState: storing a value that changes',

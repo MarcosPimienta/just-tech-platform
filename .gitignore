@@ -33,3 +33,7 @@ build/
 # Local env
 .env
 .env.local
+
+/src/generated/prisma
+.next
+.next/
