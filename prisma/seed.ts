@@ -15,6 +15,9 @@ async function main() {
     topics[topicName].push(lesson);
   });
 
+  const firstUser = await prisma.user.findFirst();
+  const creatorId = firstUser?.id;
+
   for (const [topicName, lessons] of Object.entries(topics)) {
     console.log(`Creating Topic: ${topicName} with ${lessons.length} lessons...`);
     
@@ -26,6 +29,7 @@ async function main() {
         name: topicName,
         category: "React",
         engine: "REACT",
+        creatorId,
       },
       create: {
         name: topicName,
@@ -33,6 +37,7 @@ async function main() {
         category: "React",
         engine: "REACT",
         description: `Learn everything about ${topicName} in React.`,
+        creatorId,
       },
     });
 

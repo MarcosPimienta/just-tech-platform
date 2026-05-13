@@ -23,6 +23,7 @@ export async function POST(req: Request) {
         description,
         category: category || "General",
         engine: engine || "REACT",
+        creatorId: (session.user as any).id,
       },
     });
 

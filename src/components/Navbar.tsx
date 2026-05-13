@@ -34,7 +34,7 @@ export default function Navbar() {
         <Link href="/create-course" className="bg-[#0f4a8a] text-white px-4 py-2 rounded-md font-semibold text-sm hover:bg-blue-800 transition-colors shadow-sm whitespace-nowrap">
           Create Course
         </Link>
-        <Link href="#" className="text-gray-700 font-semibold text-sm hover:text-gray-900 transition-colors hidden sm:block">
+        <Link href="/my-courses" className="text-gray-700 font-semibold text-sm hover:text-gray-900 transition-colors hidden sm:block">
           My Courses
         </Link>
         

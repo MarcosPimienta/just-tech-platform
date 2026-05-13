@@ -15,8 +15,9 @@ model User {
   role      String                 @default("USER")
   createdAt DateTime               @default(now())
   updatedAt DateTime               @updatedAt
-  proposals ModificationProposal[]
-  progress  Progress[]
+  proposals     ModificationProposal[]
+  progress      Progress[]
+  createdTopics Topic[]                @relation("UserCreatedTopics")
 }
 
 model Topic {
@@ -26,9 +27,11 @@ model Topic {
   description String?
   category    String   @default("General")
   engine      String   @default("REACT")
+  creatorId   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lessons     Lesson[]
+  creator     User?    @relation("UserCreatedTopics", fields: [creatorId], references: [id])
 }
 
 model Lesson {

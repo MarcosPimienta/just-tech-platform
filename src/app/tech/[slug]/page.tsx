@@ -16,10 +16,16 @@ export default function TechPage() {
     async function loadData() {
       if (!slug) return;
       try {
-        // 1. Fetch all topics to find the one matching the slug
+        // 1. Fetch all topics to find the one matching the slug or category
         const topicsRes = await fetch("/api/courses");
         const allTopics = await topicsRes.json();
-        const activeTopic = allTopics.find((t: any) => t.slug === slug);
+        
+        let activeTopic = allTopics.find((t: any) => t.slug === slug);
+        
+        // If not found by slug, try finding by category (e.g. slug="react" matches category="React")
+        if (!activeTopic) {
+          activeTopic = allTopics.find((t: any) => t.category.toLowerCase() === slug.toString().toLowerCase());
+        }
         
         if (!activeTopic) {
           setLoading(false);
@@ -40,8 +46,8 @@ export default function TechPage() {
 
         setTopics(topicsWithLessons);
         
-        // 4. Set initial active lesson (from the slug topic)
-        const activeTopicWithLessons = topicsWithLessons.find(t => t.slug === slug);
+        // 4. Set initial active lesson (from the found activeTopic)
+        const activeTopicWithLessons = topicsWithLessons.find(t => t.id === activeTopic.id);
         if (activeTopicWithLessons && activeTopicWithLessons.lessons.length > 0) {
           setActiveId(activeTopicWithLessons.lessons[0].id);
         }
