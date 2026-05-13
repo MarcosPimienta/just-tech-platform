@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { name, slug, description, engine } = await req.json();
+    const { name, slug, description, engine, category } = await req.json();
 
     if (!name || !slug) {
       return NextResponse.json({ message: "Name and Slug are required" }, { status: 400 });
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
         name,
         slug,
         description,
+        category: category || "General",
         engine: engine || "REACT",
       },
     });

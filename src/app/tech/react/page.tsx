@@ -41,74 +41,90 @@ export default function ReactTechPage() {
     }
   }, [activeLessonIndex]);
 
+  // Group lessons by topic (based on the part before the colon)
+  const groupedLessons = LESSONS.reduce((acc: any, lesson) => {
+    const topicName = lesson.title.includes(':') ? lesson.title.split(':')[0] : 'General';
+    if (!acc[topicName]) acc[topicName] = [];
+    acc[topicName].push(lesson);
+    return acc;
+  }, {});
+
   return (
     <div className="flex min-h-[calc(100vh-64px)] bg-[#f8f9fa] text-gray-900 font-sans relative">
-      <aside className="w-[280px] bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-64px)] sticky top-16 overflow-y-auto shadow-sm z-10 p-6">
-        <div className="mb-6">
+      <aside className="w-[300px] bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-64px)] sticky top-16 overflow-y-auto shadow-sm z-10">
+        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
           <div className="flex justify-between items-end mb-2">
-            <span className="text-xs font-bold text-[#0f4a8a] uppercase tracking-wide">My Progress:</span>
+            <span className="text-xs font-bold text-[#0f4a8a] uppercase tracking-wide">Course Progress</span>
             <span className="text-sm font-bold text-gray-800">{Math.round((completed.size / LESSONS.length) * 100)}%</span>
           </div>
           <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-[#0f4a8a] transition-all duration-500 ease-out" 
+              className="h-full bg-[#0f4a8a] transition-all duration-500 ease-out shadow-[0_0_8px_rgba(15,74,138,0.4)]" 
               style={{ width: `${(completed.size / LESSONS.length) * 100}%` }}
             ></div>
           </div>
         </div>
         
-        <div className="flex flex-col space-y-1">
-          <div className="text-sm text-gray-500 mb-1 ml-2">Tech:</div>
-          <div className="flex items-center gap-2 font-semibold text-gray-800 mb-2">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-            Frontend Development
-          </div>
-          
-          <div className="pl-4 border-l border-gray-200 ml-2.5">
-            <div className="text-sm text-gray-500 mb-1 mt-2 ml-2">Topic:</div>
-            <div className="flex items-center gap-2 font-semibold text-gray-800 mb-2">
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-              React Bolt
+        <nav className="flex-1 p-4 space-y-6">
+          <div>
+            <div className="flex items-center gap-2 px-2 py-1 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#0f4a8a]">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Technology</h3>
+                <p className="text-sm font-bold text-gray-900 leading-none mt-0.5">React Development</p>
+              </div>
             </div>
 
-            <div className="flex flex-col space-y-1 pl-4 border-l border-gray-200 ml-2.5 mb-4">
-              {LESSONS.map((l, index) => {
-                const isActive = l.id === activeId;
-                const isCompleted = completed.has(l.id);
-                
-                return (
-                  <button
-                    key={l.id}
-                    suppressHydrationWarning
-                    onClick={() => setActiveId(l.id)}
-                    className={`flex items-center text-left px-3 py-2 rounded-md transition-colors text-sm ${
-                      isActive
-                        ? "bg-[#eef2f6] text-[#0f4a8a] font-bold border-l-2 border-[#0f4a8a] -ml-[2px]"
-                        : "text-gray-600 hover:bg-gray-100 border-l-2 border-transparent -ml-[2px]"
-                    }`}
-                  >
-                    <span className="mr-2 flex-shrink-0">
-                      {isCompleted ? (
-                        <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                      ) : isActive ? (
-                        <svg className="w-4 h-4 text-[#0f4a8a]" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd"></path></svg>
-                      ) : (
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                      )}
-                    </span>
-                    <span className="truncate">Lesson {index + 1}: {l.title.split(':')[0]}</span>
-                  </button>
-                );
-              })}
+            <div className="space-y-4">
+              {Object.keys(groupedLessons).map((topicName) => (
+                <div key={topicName} className="space-y-1">
+                  <div className="flex items-center gap-2 px-2 py-1 text-xs font-bold text-[#0f4a8a] uppercase tracking-wider bg-blue-50/50 rounded-md mb-2">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    {topicName}
+                  </div>
+                  
+                  <div className="space-y-1 ml-1 border-l-2 border-gray-100">
+                    {groupedLessons[topicName].map((l: any) => {
+                      const isActive = l.id === activeId;
+                      const isCompleted = completed.has(l.id);
+                      
+                      return (
+                        <button
+                          key={l.id}
+                          suppressHydrationWarning
+                          onClick={() => setActiveId(l.id)}
+                          className={`w-full flex items-center text-left pl-4 pr-3 py-2 transition-all text-sm group relative ${
+                            isActive
+                              ? "text-[#0f4a8a] font-bold"
+                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                          }`}
+                        >
+                          {isActive && (
+                            <div className="absolute left-[-2px] top-0 bottom-0 w-[2px] bg-[#0f4a8a] shadow-[0_0_8px_rgba(15,74,138,0.6)]"></div>
+                          )}
+                          <span className="mr-3 flex-shrink-0">
+                            {isCompleted ? (
+                              <svg className="w-4 h-4 text-green-500 animate-in fade-in zoom-in duration-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
+                            ) : isActive ? (
+                              <div className="w-4 h-4 rounded-full border-2 border-[#0f4a8a] flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#0f4a8a] animate-pulse"></div>
+                              </div>
+                            ) : (
+                              <div className="w-4 h-4 rounded-full border-2 border-gray-300 group-hover:border-gray-400"></div>
+                            )}
+                          </span>
+                          <span className="truncate">{l.title.includes(':') ? l.title.split(':')[1].trim() : l.title}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          
-          <div className="text-sm text-gray-500 mb-1 ml-2 mt-4">Tech:</div>
-          <div className="flex items-center gap-2 font-semibold text-gray-800 mb-2 opacity-50">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-            Backend Development
-          </div>
-        </div>
+        </nav>
       </aside>
 
       <main className="flex-1 flex flex-col p-6 overflow-hidden">

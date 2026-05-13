@@ -9,6 +9,7 @@ export default function CreateCoursePage() {
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [engine, setEngine] = useState("REACT");
+  const [category, setCategory] = useState("React");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function CreateCoursePage() {
       const res = await fetch("/api/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, slug, description, engine }),
+        body: JSON.stringify({ name, slug, description, engine, category }),
       });
 
       if (!res.ok) {
@@ -90,18 +91,32 @@ export default function CreateCoursePage() {
             <p className="mt-1 text-xs text-gray-400 italic text-right">This will be the unique identifier in the URL.</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Execution Engine</label>
-            <select
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm bg-white"
-              value={engine}
-              onChange={(e) => setEngine(e.target.value)}
-            >
-              <option value="REACT">React Preview (Babel)</option>
-              <option value="PYTHON">Python Interpreter (WASM)</option>
-              <option value="TERMINAL">Linux Terminal (xterm.js)</option>
-            </select>
-            <p className="mt-1 text-xs text-gray-400 italic">Select the environment students will use to complete exercises.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Technology Category</label>
+              <input
+                type="text"
+                required
+                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm"
+                placeholder="e.g. React, Python, Linux"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+              <p className="mt-1 text-xs text-gray-400 italic">Groups topics under a tech (e.g. React).</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Execution Engine</label>
+              <select
+                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all sm:text-sm bg-white"
+                value={engine}
+                onChange={(e) => setEngine(e.target.value)}
+              >
+                <option value="REACT">React Preview (Babel)</option>
+                <option value="PYTHON">Python Interpreter (WASM)</option>
+                <option value="TERMINAL">Linux Terminal (xterm.js)</option>
+              </select>
+            </div>
           </div>
 
           <div>
