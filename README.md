@@ -1,68 +1,90 @@
 # Just Tech Platform 🚀
 
-An interactive learning platform for modern developers. Learn React, Linux, Python, and more through hands-on, in-browser exercises.
+An interactive, community-driven learning platform for modern technologies. Master React, Python, and Linux through hands-on exercises with real-time validation.
 
-## 🌟 Features
+---
 
-### 1. Interactive Learning Environment
-- **Multi-Engine Support**: Choose between React Preview, Python Interpreter (WASM), and Linux Terminal (xterm.js).
-- **Real-time Validation**: Instant feedback on your code with custom test suites for every lesson.
-- **Pluggable Runners**: Secure, browser-based execution using Babel, Pyodide, and WebContainers.
+## 🛠️ Technology Stack
+- **Framework:** Next.js 16 (App Router)
+- **Database:** SQLite + Prisma
+- **Auth:** NextAuth.js
+- **Styling:** Tailwind CSS (Modern Glassmorphism)
+- **Visuals:** tsparticles (Interactive Nodes)
+- **Editors:** CodeMirror 6 + Babel Standalone (React Runner)
 
-### 2. Course Creation Module
-- **Intuitive Builder**: Create topics and lessons with a powerful drag-and-drop-style curriculum builder.
-- **Lesson Builder**: Full-featured editor with CodeMirror integration for writing concepts, starter code, and validation logic.
-- **Smart Templates**: Automatically provides appropriate boilerplate based on the course engine.
+---
 
-### 3. Community & Review System
-- **Suggest Edits**: Students can propose improvements to any lesson content or code.
-- **Admin Review Dashboard**: Centralized hub for admins to diff, approve, or reject community contributions.
-- **One-Click Deployment**: Approved changes are instantly applied to live courses.
+## 📖 Course Creation Guide
 
-### 4. Robust Security
-- **Authentication**: Secure login/registration via NextAuth.
-- **Route Protection**: Role-based access control (RBAC) ensuring only admins can access sensitive builder and review tools.
+### 1. Creating via GUI (Community Mode)
+Ideal for contributors who want to propose new lessons or courses.
+1.  Navigate to `/create-course`.
+2.  Fill in the **Course Identity**:
+    - **Title:** The name of the course (e.g., "Advanced Hooks").
+    - **Category:** The tech it belongs to (e.g., "React").
+    - **Engine:** Select between React, Python, or Terminal.
+3.  Use the **Lesson Builder** to add interactive exercises:
+    - **Concept:** Markdown/HTML explanation.
+    - **Example:** Working code snippet.
+    - **Exercise:** Instructions for the student.
+    - **Starter Code:** What the student sees first.
+    - **Validation Test:** An async function that receives the `container` DOM node and returns `{ pass: boolean, message: string }`.
 
-## 🛠️ Tech Stack
+### 2. Creating via Code (Developer Mode)
+Ideal for rapid development and syncing local content to the database.
+1.  Define your lessons in `src/data/<tech>Lessons.ts` following the `LESSONS` array structure.
+2.  Update `prisma/seed.ts` if you create a new file.
+3.  Run the seed command:
+    ```bash
+    npx prisma db seed
+    ```
+    *This will upsert your code-based lessons into the database, grouping them by their title prefix (e.g., "useState: ...").*
 
-- **Framework**: Next.js 16 (Turbopack)
-- **Database**: SQLite with Prisma ORM
-- **Authentication**: NextAuth.js
-- **Styling**: Vanilla CSS / Tailwind CSS
-- **Editors**: CodeMirror
-- **Transpilation**: @babel/standalone
+---
+
+## 🤖 AI Material Generation Prompt
+
+Use the following prompt to generate high-quality course material for the platform. It ensures the output is perfectly formatted for our `LESSONS` array.
+
+> [!IMPORTANT]
+> **Prompt:**
+> "Generate an interactive lesson for the 'Just Tech Platform' following this exact TypeScript structure:
+> 
+> ```typescript
+> {
+>   id: 'unique_id',
+>   title: 'Topic: Lesson Name', // Use ':' to group by topic
+>   concept: '<p>HTML explanation of the concept.</p>',
+>   exampleCode: 'function Example() { ... }',
+>   exerciseDescription: '<p>What the user needs to do.</p>',
+>   starterCode: 'function Exercise() { ... }',
+>   solution: 'function Exercise() { ... }',
+>   test: async (container) => {
+>     // Use container.textContent.includes() or container.querySelector()
+>     // Return { pass: true, message: "Passed!" } or { pass: false, message: "Error" }
+>   }
+> }
+> ```
+> 
+> Topic: [YOUR TOPIC HERE]
+> Difficulty: [Beginner/Intermediate/Advanced]
+> Focus on interactive validation and clear conceptual explanation."
+
+---
 
 ## 🚀 Getting Started
 
-1.  **Clone & Install**:
-    ```bash
-    git clone [repo-url]
-    npm install
-    ```
+### Prerequisites
+- Node.js 18+
+- npm/pnpm
 
-2.  **Environment Setup**:
-    Create a `.env` file with:
-    ```env
-    DATABASE_URL="file:./dev.db"
-    NEXTAUTH_SECRET="your-secret"
-    NEXTAUTH_URL="http://localhost:3000"
-    ```
+### Installation
+1.  Clone the repository.
+2.  Install dependencies: `npm install`
+3.  Set up the database: `npx prisma migrate dev`
+4.  Run the development server: `npm run dev`
 
-3.  **Database Migration**:
-    ```bash
-    npx prisma migrate dev
-    ```
+---
 
-4.  **Run Development**:
-    ```bash
-    npm run dev
-    ```
-
-## 📖 Roadmap
-
-- [x] Course Creation API & UI
-- [x] Multi-Engine Foundation (React, Python, Terminal)
-- [x] Suggest Edits & Admin Dashboard
-- [ ] Implement Full Python WASM (Pyodide) Integration
-- [ ] Implement Full Linux Terminal (WebContainer) Integration
-- [ ] User Progress Analytics & Certificates
+## 📄 License
+Built with ❤ by the community for the community.
