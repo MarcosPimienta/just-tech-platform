@@ -5,21 +5,50 @@ import InteractiveLesson from "@/components/InteractiveLesson";
 import { LESSONS } from "@/data/reactLessons";
 
 export default function ReactTechPage() {
-  const [activeId, setActiveId] = useState(LESSONS[0].id);
+  const [topics, setTopics] = useState<any[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
-
-  const activeLessonIndex = LESSONS.findIndex((l) => l.id === activeId);
-  const activeLesson = LESSONS[activeLessonIndex];
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/progress")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.completed) {
-          setCompleted(new Set(data.completed));
+    async function loadData() {
+      try {
+        // Fetch topics for React
+        const topicsRes = await fetch("/api/courses");
+        const allTopics = await topicsRes.json();
+        const reactTopics = allTopics.filter((t: any) => t.category === "React");
+        
+        // Fetch lessons for each topic
+        const topicsWithLessons = await Promise.all(reactTopics.map(async (t: any) => {
+          const res = await fetch(`/api/courses/${t.id}/lessons`);
+          const lessons = await res.json();
+          return { ...t, lessons };
+        }));
+
+        setTopics(topicsWithLessons);
+        
+        if (topicsWithLessons.length > 0 && topicsWithLessons[0].lessons.length > 0) {
+          setActiveId(topicsWithLessons[0].lessons[0].id);
         }
-      });
+
+        // Fetch progress
+        const progressRes = await fetch("/api/progress");
+        const progressData = await progressRes.json();
+        if (progressData.completed) {
+          setCompleted(new Set(progressData.completed));
+        }
+      } catch (err) {
+        console.error("Failed to load curriculum", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
   }, []);
+
+  const allLessons = topics.flatMap(t => t.lessons);
+  const activeLesson = allLessons.find(l => l.id === activeId);
+  const activeLessonIndex = allLessons.findIndex(l => l.id === activeId);
 
   const handleMarkComplete = useCallback(async () => {
     setCompleted((prev) => {
@@ -36,10 +65,20 @@ export default function ReactTechPage() {
   }, [activeId]);
 
   const handleNextLesson = useCallback(() => {
-    if (activeLessonIndex < LESSONS.length - 1) {
-      setActiveId(LESSONS[activeLessonIndex + 1].id);
+    if (activeLessonIndex < allLessons.length - 1 && allLessons[activeLessonIndex + 1]) {
+      setActiveId(allLessons[activeLessonIndex + 1].id);
     }
-  }, [activeLessonIndex]);
+  }, [activeLessonIndex, allLessons]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50">
+        <div className="w-12 h-12 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!activeLesson) return null;
 
   // Group lessons by topic (based on the part before the colon)
   const groupedLessons = LESSONS.reduce((acc: any, lesson) => {
@@ -55,12 +94,12 @@ export default function ReactTechPage() {
         <div className="p-6 border-b border-gray-100 bg-gray-50/50">
           <div className="flex justify-between items-end mb-2">
             <span className="text-xs font-bold text-[#0f4a8a] uppercase tracking-wide">Course Progress</span>
-            <span className="text-sm font-bold text-gray-800">{Math.round((completed.size / LESSONS.length) * 100)}%</span>
+            <span className="text-sm font-bold text-gray-800">{Math.round((completed.size / allLessons.length) * 100)}%</span>
           </div>
           <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
             <div 
               className="h-full bg-[#0f4a8a] transition-all duration-500 ease-out shadow-[0_0_8px_rgba(15,74,138,0.4)]" 
-              style={{ width: `${(completed.size / LESSONS.length) * 100}%` }}
+              style={{ width: `${(completed.size / allLessons.length) * 100}%` }}
             ></div>
           </div>
         </div>
@@ -78,15 +117,15 @@ export default function ReactTechPage() {
             </div>
 
             <div className="space-y-4">
-              {Object.keys(groupedLessons).map((topicName) => (
-                <div key={topicName} className="space-y-1">
+              {topics.map((topic) => (
+                <div key={topic.id} className="space-y-1">
                   <div className="flex items-center gap-2 px-2 py-1 text-xs font-bold text-[#0f4a8a] uppercase tracking-wider bg-blue-50/50 rounded-md mb-2">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    {topicName}
+                    {topic.name}
                   </div>
                   
                   <div className="space-y-1 ml-1 border-l-2 border-gray-100">
-                    {groupedLessons[topicName].map((l: any) => {
+                    {topic.lessons.map((l: any) => {
                       const isActive = l.id === activeId;
                       const isCompleted = completed.has(l.id);
                       
@@ -132,7 +171,7 @@ export default function ReactTechPage() {
           key={activeLesson.id}
           lesson={activeLesson}
           onMarkComplete={handleMarkComplete}
-          onNextLesson={activeLessonIndex < LESSONS.length - 1 ? handleNextLesson : undefined}
+          onNextLesson={activeLessonIndex < allLessons.length - 1 ? handleNextLesson : undefined}
         />
       </main>
     </div>
