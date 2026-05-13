@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import ParticlesBackground from '@/components/ParticlesBackground';
 
 export default function Home() {
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#f8f9fa] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans relative">
-      <div className="max-w-4xl w-full bg-white p-12 rounded-xl shadow-sm border border-gray-200">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden">
+      <ParticlesBackground />
+      
+      <div className="max-w-4xl w-full bg-white p-12 rounded-2xl shadow-xl border border-gray-100 relative z-10">
         
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">

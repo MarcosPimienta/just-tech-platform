@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ParticlesBackground from "@/components/ParticlesBackground";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -30,8 +31,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-md w-full bg-white p-10 rounded-xl shadow-lg border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden bg-slate-50">
+      <ParticlesBackground />
+      
+      <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-xl border border-gray-100 relative z-10">
         <div className="flex flex-col items-center mb-8">
           <Link href="/">
             <img src="/logo.png" alt="Just Tech Logo" className="w-16 h-16 object-contain mb-4 hover:opacity-90 transition-opacity" />
