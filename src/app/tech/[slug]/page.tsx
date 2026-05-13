@@ -1,25 +1,38 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "next/navigation";
 import InteractiveLesson from "@/components/InteractiveLesson";
-import { LESSONS } from "@/data/reactLessons";
 
-export default function ReactTechPage() {
+export default function TechPage() {
+  const { slug } = useParams();
   const [topics, setTopics] = useState<any[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [currentCategory, setCurrentCategory] = useState("Technology");
 
   useEffect(() => {
     async function loadData() {
+      if (!slug) return;
       try {
-        // Fetch topics for React
+        // 1. Fetch all topics to find the one matching the slug
         const topicsRes = await fetch("/api/courses");
         const allTopics = await topicsRes.json();
-        const reactTopics = allTopics.filter((t: any) => t.category === "React");
+        const activeTopic = allTopics.find((t: any) => t.slug === slug);
         
-        // Fetch lessons for each topic
-        const topicsWithLessons = await Promise.all(reactTopics.map(async (t: any) => {
+        if (!activeTopic) {
+          setLoading(false);
+          return;
+        }
+
+        setCurrentCategory(activeTopic.category);
+
+        // 2. Fetch all topics in the same category
+        const categoryTopics = allTopics.filter((t: any) => t.category === activeTopic.category);
+        
+        // 3. Fetch lessons for each topic in the category
+        const topicsWithLessons = await Promise.all(categoryTopics.map(async (t: any) => {
           const res = await fetch(`/api/courses/${t.id}/lessons`);
           const lessons = await res.json();
           return { ...t, lessons };
@@ -27,11 +40,13 @@ export default function ReactTechPage() {
 
         setTopics(topicsWithLessons);
         
-        if (topicsWithLessons.length > 0 && topicsWithLessons[0].lessons.length > 0) {
-          setActiveId(topicsWithLessons[0].lessons[0].id);
+        // 4. Set initial active lesson (from the slug topic)
+        const activeTopicWithLessons = topicsWithLessons.find(t => t.slug === slug);
+        if (activeTopicWithLessons && activeTopicWithLessons.lessons.length > 0) {
+          setActiveId(activeTopicWithLessons.lessons[0].id);
         }
 
-        // Fetch progress
+        // 5. Fetch progress
         const progressRes = await fetch("/api/progress");
         const progressData = await progressRes.json();
         if (progressData.completed) {
@@ -44,7 +59,7 @@ export default function ReactTechPage() {
       }
     }
     loadData();
-  }, []);
+  }, [slug]);
 
   const allLessons = topics.flatMap(t => t.lessons);
   const activeLesson = allLessons.find(l => l.id === activeId);
@@ -52,6 +67,7 @@ export default function ReactTechPage() {
 
   const handleMarkComplete = useCallback(async () => {
     setCompleted((prev) => {
+      if (!activeId) return prev;
       const next = new Set(prev);
       next.add(activeId);
       return next;
@@ -80,14 +96,6 @@ export default function ReactTechPage() {
 
   if (!activeLesson) return null;
 
-  // Group lessons by topic (based on the part before the colon)
-  const groupedLessons = LESSONS.reduce((acc: any, lesson) => {
-    const topicName = lesson.title.includes(':') ? lesson.title.split(':')[0] : 'General';
-    if (!acc[topicName]) acc[topicName] = [];
-    acc[topicName].push(lesson);
-    return acc;
-  }, {});
-
   return (
     <div className="flex min-h-[calc(100vh-64px)] bg-[#f8f9fa] text-gray-900 font-sans relative">
       <aside className="w-[300px] bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-64px)] sticky top-16 overflow-y-auto shadow-sm z-10">
@@ -112,7 +120,7 @@ export default function ReactTechPage() {
               </div>
               <div>
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Technology</h3>
-                <p className="text-sm font-bold text-gray-900 leading-none mt-0.5">React Development</p>
+                <p className="text-sm font-bold text-gray-900 leading-none mt-0.5">{currentCategory}</p>
               </div>
             </div>
 

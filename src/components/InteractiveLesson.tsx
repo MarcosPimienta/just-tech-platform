@@ -94,7 +94,19 @@ export default function InteractiveLesson({
               className="mb-4 bg-transparent text-sm"
             />
             <div className="bg-white p-4 rounded border border-gray-300">
-              <ReactRunner code={lesson.exampleCode} test="() => ({ pass: true })" onResult={() => {}} />
+              {(() => {
+                const engine = lesson.topic?.engine || "REACT";
+                if (engine === "REACT") {
+                  return <ReactRunner code={lesson.exampleCode} test="() => ({ pass: true })" onResult={() => {}} />;
+                }
+                if (engine === "PYTHON") {
+                  return <PythonRunner code={lesson.exampleCode} onResult={() => {}} />;
+                }
+                if (engine === "TERMINAL") {
+                  return <TerminalRunner code={lesson.exampleCode} onResult={() => {}} />;
+                }
+                return <div>Unsupported Engine: {engine}</div>;
+              })()}
             </div>
           </div>
 
@@ -110,7 +122,7 @@ export default function InteractiveLesson({
             <div className="border border-gray-800 rounded-t-lg overflow-hidden shadow-inner bg-[#282c34]">
               <CodeMirror
                 value={draft}
-                extensions={[javascript({ jsx: true })]}
+                extensions={lesson.topic?.engine === "REACT" ? [javascript({ jsx: true })] : []}
                 onChange={(val) => setDraft(val)}
                 theme="dark"
                 className="text-sm font-mono"
@@ -205,7 +217,7 @@ export default function InteractiveLesson({
                 <div className="font-bold text-gray-700 mb-2">Hint / Solution:</div>
                 <CodeMirror
                   value={lesson.solution}
-                  extensions={[javascript({ jsx: true })]}
+                  extensions={lesson.topic?.engine === "REACT" ? [javascript({ jsx: true })] : []}
                   editable={false}
                   theme="light"
                   className="text-sm border border-gray-200 rounded"

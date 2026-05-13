@@ -8,49 +8,45 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  password      String?
-  role          String    @default("USER")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  progress      Progress[]
-  proposals     ModificationProposal[]
+  id        String                 @id @default(cuid())
+  name      String?
+  email     String?                @unique
+  password  String?
+  role      String                 @default("USER")
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  proposals ModificationProposal[]
+  progress  Progress[]
 }
 
 model Topic {
   id          String   @id @default(cuid())
   name        String
-  slug        String   @unique // e.g. "react", "javascript"
+  slug        String   @unique
   description String?
-  category    String   @default("General") // e.g. "React", "Linux", "Python"
-  engine      String   @default("REACT") // e.g. "REACT", "PYTHON", "TERMINAL"
+  category    String   @default("General")
+  engine      String   @default("REACT")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   lessons     Lesson[]
 }
 
 model Lesson {
-  id                  String   @id @default(cuid())
+  id                  String                 @id @default(cuid())
   topicId             String
-  order               Int      @default(0)
+  order               Int                    @default(0)
   title               String
   concept             String
   exampleCode         String
   exerciseDescription String
   starterCode         String
   solution            String
-  test                String   // Stringified function
-
-  topic               Topic    @relation(fields: [topicId], references: [id])
-  progress            Progress[]
+  test                String
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  topic               Topic                  @relation(fields: [topicId], references: [id])
   proposals           ModificationProposal[]
-
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  progress            Progress[]
 
   @@unique([topicId, order])
 }
@@ -60,9 +56,8 @@ model Progress {
   userId      String
   lessonId    String
   completedAt DateTime @default(now())
-
-  user        User     @relation(fields: [userId], references: [id])
   lesson      Lesson   @relation(fields: [lessonId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, lessonId])
 }
@@ -71,10 +66,9 @@ model ModificationProposal {
   id              String   @id @default(cuid())
   userId          String
   lessonId        String
-  proposedChanges String   // JSON string of changes to lesson fields
-  status          String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  proposedChanges String
+  status          String   @default("PENDING")
   createdAt       DateTime @default(now())
-
-  user            User     @relation(fields: [userId], references: [id])
   lesson          Lesson   @relation(fields: [lessonId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
 }

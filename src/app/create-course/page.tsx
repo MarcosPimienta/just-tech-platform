@@ -12,12 +12,33 @@ export default function CreateCoursePage() {
   const [category, setCategory] = useState("React");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [existingId, setExistingId] = useState<string | null>(null);
   const router = useRouter();
 
   const handleNameChange = (val: string) => {
     setName(val);
     // Auto-generate slug
-    setSlug(val.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, ''));
+    const newSlug = val.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+    setSlug(newSlug);
+    checkSlugExistence(newSlug);
+  };
+
+  const checkSlugExistence = async (s: string) => {
+    if (!s) return;
+    try {
+      const res = await fetch("/api/courses");
+      const courses = await res.json();
+      const existing = courses.find((c: any) => c.slug === s);
+      if (existing) {
+        setError("A course with this slug already exists.");
+        setExistingId(existing.id);
+      } else {
+        setError("");
+        setExistingId(null);
+      }
+    } catch (err) {
+      console.error("Error checking slug", err);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,8 +77,17 @@ export default function CreateCoursePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm font-medium">
-              {error}
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm font-medium flex justify-between items-center">
+              <span>{error}</span>
+              {existingId && (
+                <button
+                  type="button"
+                  onClick={() => router.push(`/create-course/${existingId}`)}
+                  className="ml-4 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
+                >
+                  Edit Existing
+                </button>
+              )}
             </div>
           )}
 
